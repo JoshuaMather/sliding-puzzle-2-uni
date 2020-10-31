@@ -7,6 +7,7 @@ public class Model {
 	private Tile[][] contents; // All tiles.
 	private Tile emptyTile; // The empty space.
 
+	private int moveCounter;
 	private int gameTime; // The number of seconds the game has been played for so far
 
 	public Model(int rows, int cols) {
@@ -33,18 +34,21 @@ public class Model {
 		emptyTile = contents[ROWS - 1][COLS - 1];
 		emptyTile.setFace(null);
 
-		// Reset game timer
+		// Reset game timer and move counter
 		gameTime = 0;
+		this.resetMoveCounter();
 	}
 
 	// Shuffle the tiles around to create a new game.
 	public void shuffle() {
 		// Mix up the board through a series of legal moves.
+		int temp = moveCounter;
 		int rand = (int) (Math.random() * 1000);
 		for (int i = 0; i < rand; i++) {
 			int r = (int) (Math.random() * ROWS);
 			int c = (int) (Math.random() * COLS);
 			moveTile(r, c);
+		moveCounter = temp;
 		}
 	}
 
@@ -63,6 +67,7 @@ public class Model {
 		// Check to see if this neighbour is on board and is empty.
 		if (isLegalRowCol(rNeighbor, cNeighbor) && contents[rNeighbor][cNeighbor] == emptyTile) {
 			exchangeTiles(r, c, rNeighbor, cNeighbor);
+			moveCounter = moveCounter + 1;
 			return true;
 		}
 		return false;
@@ -107,5 +112,14 @@ public class Model {
 
 	public void incrementGameTime() {
 		gameTime += 1;
+	}
+	
+	public int getMoveCount() {
+		return moveCounter;
+	}
+	
+	public void resetMoveCounter() {
+		moveCounter = 0;
+		
 	}
 }
